@@ -1,0 +1,42 @@
+CREATE TABLE FLFantasy5(
+    id int PRIMARY KEY AUTO_INCREMENT not null,
+    pattern VARCHAR(15) not null,
+    count int not null
+);
+
+CREATE TABLE FLFantasy5(
+    id int PRIMARY KEY AUTO_INCREMENT not null,
+    pattern VARCHAR(15) not null,
+    subPattern VARCHAR(35) not null,
+    count int not null
+);
+
+CREATE TABLE FLFantasy5(
+    id int PRIMARY KEY AUTO_INCREMENT not null,
+    doubles VARCHAR(10) not null,
+    n1 tinyint not null,
+    n2 tinyint not null,
+    count int not null
+);
+
+CREATE TABLE FLFantasy5(
+    id int PRIMARY KEY AUTO_INCREMENT not null,
+    triples VARCHAR(20) not null,
+    n1 tinyint not null,
+    n2 tinyint not null,
+    n3 tinyint not null,
+    count int not null
+);
+
+- Patterns w/ count (AAABC, etc)
+   - FLFantasy5 rows: id, pattern, count
+
+- SubPatterns w/count (A1B2B2C2C2, etc)
+   - FLFantasy5rows: id, subPattern, count
+
+- Fantasy5 Doubles w/count
+   - FLFantasy5 rows: id, double, count
+
+- Fantasy 5 Triples w/count
+   - FLFantasy5 rows: id, triple, 
+ 

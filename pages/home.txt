@@ -1,0 +1,395 @@
+import { useEffect, useState } from 'react'
+
+import Head from 'next/head'
+
+import FUNCTIONS from '../functions/functions'
+import { algorithm1 } from '../functions/algorithms'
+
+/*
+
+Home Page: 
+  - Pull Daily Data(Latest Results + Algorithm Results)
+  - Show 5 Recommended
+  - Ability to input 5 prediction plays
+  - Shows Recently Played numbers and times they have shown
+  - Show Hot, Cold, Overdue, Repeat Numbers
+  
+**/
+
+
+export default function Home() {
+
+    let filtered
+
+    const [currentDateSelected, setCurrentDateSelected] = useState(new Date)
+
+    const [thelast18, setLast18] = useState([])
+    const [todaysDate, setTodaysDate] = useState('')
+    const [guessLine1, setGuessLine1] = useState('')
+    const [guessLine2, setGuessLine2] = useState('')
+    const [guessLine3, setGuessLine3] = useState('')
+    const [guessLine4, setGuessLine4] = useState('')
+    const [guessLine5, setGuessLine5] = useState('')
+    const [recentlyPlayedNumbers, setRecentlyPlayedNumbers] = useState({})
+    const [predictionsSet, setPredictionsSet] = useState(false)
+    const [currentHot, setCurrentHot] = useState([])
+    const [currentCold, setCurrentCold] = useState([])
+    const [currentOverdue, setCurrentOverdue] = useState([])
+    const [currentRepeat, setCurrentRepeat] = useState([])
+
+    const minus1Day = () => {
+        let d = new Date(currentDateSelected)
+        d.setDate(d.getDate() - 1)
+        setCurrentDateSelected(d)
+    }
+
+    const plus1Day = () => {
+        let d = new Date(currentDateSelected)
+        d.setDate(d.getDate() + 1)
+        setCurrentDateSelected(d)
+    }
+
+    useEffect(async () => {
+
+        //test area
+        // 6/14/2022
+
+
+        // END test area
+
+        let today = new Date()
+        setTodaysDate(today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate())
+
+        let x = await FUNCTIONS.getLast18()
+
+        if (x.status) {
+
+            setLast18(x.rows)
+            // if (x.rows[x.rows.length - 1].hot !== null) {
+            setCurrentHot(x.rows[x.rows.length - 1].hot.split('-'))
+            setCurrentCold(x.rows[x.rows.length - 1].cold.split('-'))
+            setCurrentOverdue(x.rows[x.rows.length - 1].overdue.split('-'))
+            setCurrentRepeat(x.rows[x.rows.length - 1].repeats.split('-'))
+            // }
+
+
+            let r = await FUNCTIONS.filterPlayedNumbers(x.rows)
+
+            if (r.status) {
+                algorithm1(thelast18, currentHot, currentCold, currentOverdue, currentRepeat, r.filtered)
+
+                // set Recently Played Numbers state
+                setRecentlyPlayedNumbers(r.filtered)
+            }
+        }
+
+
+        return () => {
+            console.log('casdsd11111')
+        }
+    }, [])
+
+    const last18 = thelast18.map(e => (
+        <div className="lineResult" key={e.date}>
+            {e.sequence}
+        </div>
+    ))
+
+    if (recentlyPlayedNumbers.length > 0) {
+        filtered = recentlyPlayedNumbers.map(e => (
+            <div key={e[0]}>
+                {e[0] + " : " + e[1]}
+            </div>
+
+        ))
+    }
+    // *********** Input One **************  
+    const inputBlur1 = (val) => {
+        let arr = []
+
+        for (let i = 0; i < guessLine1.length; i++) {
+            arr.push(guessLine1[i])
+        }
+
+        if (arr[0] === '-' || arr.length == 0) {
+            return
+        } else {
+            arr.splice(2, 0, '-')
+            arr.splice(5, 0, '-')
+            arr.splice(8, 0, '-')
+            arr.splice(11, 0, '-')
+            setGuessLine1(arr.join(''))
+        }
+
+    }
+
+    const inputFocus1 = () => {
+        if (guessLine1 === '') {
+            return
+        } else {
+            let ff = guessLine1.split('-')
+
+            if (ff[0] === '') {
+                return
+            } else {
+                setGuessLine1(ff[0] + ff[1] + ff[2] + ff[3] + ff[4])
+            }
+
+        }
+    }
+
+    const adjustText1 = (text) => {
+        setGuessLine1(text)
+    }
+
+    // *********** Input TWO **************  
+    const inputBlur2 = (val) => {
+        if (guessLine2 !== undefined || guessLine2 !== '') {
+
+            let arr = []
+
+            for (let i = 0; i < guessLine2.length; i++) {
+                arr.push(guessLine2[i])
+
+            }
+
+            if (arr[0] === '-' || arr.length == 0) {
+                return
+            } else {
+                arr.splice(2, 0, '-')
+                arr.splice(5, 0, '-')
+                arr.splice(8, 0, '-')
+                arr.splice(11, 0, '-')
+                setGuessLine2(arr.join(''))
+            }
+        }
+
+    }
+
+    const inputFocus2 = () => {
+
+        if (guessLine2 === '') {
+            return
+        } else {
+            let ff = guessLine2.split('-')
+
+            if (ff[0] === '') {
+                return
+            } else {
+                setGuessLine2(ff[0] + ff[1] + ff[2] + ff[3] + ff[4])
+            }
+
+        }
+
+    }
+
+    const adjustText2 = (text) => {
+        setGuessLine2(text)
+    }
+
+    // *********** Input Three **************  
+    const inputBlur3 = (val) => {
+        if (guessLine3 !== undefined || guessLine3 !== '') {
+
+            let arr = []
+
+            for (let i = 0; i < guessLine3.length; i++) {
+                arr.push(guessLine3[i])
+
+            }
+
+            if (arr[0] === '-' || arr.length == 0) {
+                return
+            } else {
+                arr.splice(2, 0, '-')
+                arr.splice(5, 0, '-')
+                arr.splice(8, 0, '-')
+                arr.splice(11, 0, '-')
+                setGuessLine3(arr.join(''))
+            }
+        }
+
+    }
+
+    const inputFocus3 = () => {
+        if (guessLine3 === '') {
+            return
+        } else {
+            let ff = guessLine3.split('-')
+
+            if (ff[0] === '') {
+                return
+            } else {
+                setGuessLine3(ff[0] + ff[1] + ff[2] + ff[3] + ff[4])
+            }
+
+        }
+    }
+
+    const adjustText3 = (text) => {
+        setGuessLine3(text)
+    }
+
+    // *********** Input Four **************  
+    const inputBlur4 = (val) => {
+        if (guessLine4 !== undefined || guessLine4 !== '') {
+
+            let arr = []
+
+            for (let i = 0; i < guessLine4.length; i++) {
+                arr.push(guessLine4[i])
+
+            }
+
+            if (arr[0] === '-' || arr.length == 0) {
+                return
+            } else {
+                arr.splice(2, 0, '-')
+                arr.splice(5, 0, '-')
+                arr.splice(8, 0, '-')
+                arr.splice(11, 0, '-')
+                setGuessLine4(arr.join(''))
+            }
+        }
+
+    }
+
+    const inputFocus4 = () => {
+        if (guessLine4 === '') {
+            return
+        } else {
+            let ff = guessLine4.split('-')
+
+            if (ff[0] === '') {
+                return
+            } else {
+                setGuessLine4(ff[0] + ff[1] + ff[2] + ff[3] + ff[4])
+            }
+        }
+    }
+
+    const adjustText4 = (text) => {
+        setGuessLine4(text)
+    }
+
+    // *********** Input Five **************  
+    const inputBlur5 = (val) => {
+        if (guessLine5 !== undefined || guessLine5 !== '') {
+
+            let arr = []
+
+            for (let i = 0; i < guessLine5.length; i++) {
+                arr.push(guessLine5[i])
+
+            }
+
+            if (arr[0] === '-' || arr.length == 0) {
+                return
+            } else {
+                arr.splice(2, 0, '-')
+                arr.splice(5, 0, '-')
+                arr.splice(8, 0, '-')
+                arr.splice(11, 0, '-')
+                setGuessLine5(arr.join(''))
+            }
+        }
+
+    }
+
+    const inputFocus5 = () => {
+        if (guessLine5 === '') {
+            return
+        } else {
+            let ff = guessLine5.split('-')
+
+            if (ff[0] === '') {
+                return
+            } else {
+                setGuessLine5(ff[0] + ff[1] + ff[2] + ff[3] + ff[4])
+            }
+
+        }
+    }
+
+    const adjustText5 = (text) => {
+        setGuessLine5(text)
+    }
+
+    const saveGuesses = async () => {
+        if (guessLine1 !== '' && guessLine2 !== '' && guessLine3 !== '' && guessLine4 !== '' && guessLine5 !== '') {
+
+            let obj = [guessLine1, guessLine2, guessLine3, guessLine4, guessLine5]
+
+            // insert into mongo database
+            let res = await FUNCTIONS.saveGuesses(todaysDate, obj)
+            if (res.status) {
+
+            }
+        } else {
+            // insert toast notification that guesses are incomplete
+        }
+    }
+
+    return (
+        <div>
+            <Head>
+                <title>Lottery Home</title>
+                <meta name="description" content="FL Fantasy Home" />
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
+            <div className="container">
+                <main>
+                    <div style={{ textAlign: 'center' }}><br />
+                        <h4>{currentDateSelected.toLocaleDateString()}</h4> <br />
+                        <button style={{ marginRight: "5px" }} onClick={() => minus1Day(currentDateSelected)} name="previous"> {'<Prev'}  </button>
+                        <button style={{ marginLeft: "5px" }} onClick={() => plus1Day(currentDateSelected)} name="right">{'Next>'}</button>
+                    </div>
+                    <div className="row">
+                        <div className="col-8">
+                            <div style={{ textAlign: 'center' }}>
+                                <h2>Recent Results</h2>
+                                {last18}
+                            </div>
+                            <br />
+                            <br />
+                            <div className="ctr">
+                                <h2>H-C-O-R</h2>
+                                Hot: {currentHot.join(', ')} <br />
+                                Cold: {currentCold.join(', ')} <br />
+                                Overdue: {currentOverdue.join(', ')} <br />
+                                Repeat: {currentRepeat.join(', ')}
+                            </div>
+                            <br />
+                            <br />
+                            <div>
+                                <div>
+                                    <h3>Generated</h3>
+                                    {/** Algorthmic predictions go here*/}
+                                </div>
+
+                                <div>
+                                    <h3>Predictions</h3>
+                                    <input value={guessLine1} onChange={(e) => adjustText1(e.target.value)} maxLength={10} onBlur={() => inputBlur1()} onFocus={() => inputFocus1()} type="text" /> <br />
+                                    <input value={guessLine2} onChange={(e) => adjustText2(e.target.value)} maxLength={10} onBlur={() => inputBlur2()} onFocus={() => inputFocus2()} type="text" /> <br />
+                                    <input value={guessLine3} onChange={(e) => adjustText3(e.target.value)} maxLength={10} onBlur={() => inputBlur3()} onFocus={() => inputFocus3()} type="text" /> <br />
+                                    <input value={guessLine4} onChange={(e) => adjustText4(e.target.value)} maxLength={10} onBlur={() => inputBlur4()} onFocus={() => inputFocus4()} type="text" /> <br />
+                                    <input value={guessLine5} onChange={(e) => adjustText5(e.target.value)} maxLength={10} onBlur={() => inputBlur5()} onFocus={() => inputFocus5()} type="text" /> <br />
+                                    <button onClick={() => saveGuesses()} value="Save">Save</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="col-4">
+                            <div>
+                                <h2>Played Numbers (Last 18)</h2>
+                                {filtered}
+                            </div>
+                        </div>
+
+                    </div>
+
+                </main>
+            </div>
+        </div>
+    )
+}
